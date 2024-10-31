@@ -1,0 +1,126 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct lista{
+    int info;
+    struct lista * next;
+};
+
+typedef struct lista Lista;
+
+Lista * inicializaLista(){
+    return NULL;
+}
+
+Lista * inserir(Lista * pL, int valor){
+    Lista * novo;
+    novo = (Lista *) malloc(sizeof(Lista));
+    if(novo != NULL){
+        novo->info = valor;
+        novo->next = pL;
+        return novo;
+    }
+    return pL; // Vai retornar para o padrão caso a lista de problema
+}
+
+void imprimir(Lista * pL){
+    if (pL == NULL) {
+        printf("Lista vazia\n");
+        return;
+    }
+    while(pL != NULL){
+        printf("[%d] -> ", pL->info);
+        pL = pL->next;
+    }
+}
+
+Lista * remover(Lista * pL, int valor){
+    Lista * ant = NULL;
+    Lista * pAux = pL;
+    while(pAux != NULL && pAux->info != valor){
+        ant = pAux;
+        pAux = pAux->next;
+    }
+    if(pAux == NULL)
+        return pL;
+    if(ant == NULL)
+        pL = pL->next;
+    else
+        ant->next = pAux->next;
+    free(pAux);
+    return pL;
+}
+
+// Função para ver se a lista é verdadeira
+int existe_na_lista(Lista *pL, int valor) {
+    if (pL == NULL) return 0; // Lista Vazia, Responder Falso
+
+    Lista *p = pL;
+    while (p != NULL) {
+        if (p->info == valor) {
+            return 1; // Lista Encontrada, Responder Verdadeiro
+        }
+        p = p->next;
+    }
+    return 0; // Falso, valor não encontrado
+}
+
+// Função para alterar o valor dado
+int alterar_valor(Lista *pL, int valor_antigo, int novo_valor) {
+    if (pL == NULL) return 0; // Lista Vazia, Retornar Falso
+
+    Lista *p = pL;
+    while (p != NULL) {
+        if (p->info == valor_antigo) {
+            p->info = novo_valor;
+            return 1; // Lista Encontrada, Valor Alterado com Sucesso
+        }
+        p = p->next;
+    }
+    return 0; // Falso, Valor Antigo Retornado
+}
+
+int main(){
+
+    Lista * L;
+    L = inicializaLista();
+
+    // Testando Lista Vazia
+    int valor_procurado = 100;
+    printf("Existe %d na lista? %s\n", valor_procurado, existe_na_lista(L, valor_procurado) ? "Sim" : "Não");
+
+    int valor_antigo = 100;
+    int novo_valor = 200;
+    if (alterar_valor(L, valor_antigo, novo_valor)) {
+        printf("Valor %d alterado para %d com sucesso.\n", valor_antigo, novo_valor);
+    } else {
+        printf("Valor %d não encontrado para alteração.\n", valor_antigo);
+    }
+
+    // Inserindo Elementos, Testando Novamente
+    L = inserir(L, 1000);
+    L = inserir(L, 100);
+    L = inserir(L, 10);
+
+    printf("\nLista depois das inserções:\n");
+    imprimir(L);
+    
+    printf("\n");
+
+    printf("\nExiste %d na lista? %s\n", valor_procurado, existe_na_lista(L, valor_procurado) ? "Sim" : "Não");
+
+    if (alterar_valor(L, valor_antigo, novo_valor)) {
+        printf("Valor %d alterado para %d com sucesso.\n", valor_antigo, novo_valor);
+    } else {
+        printf("Valor %d não encontrado para alteração.\n", valor_antigo);
+    }
+
+    printf("\nLista depois da alteração:\n");
+    imprimir(L);
+
+    L = remover(L, 1);
+    printf("\n");
+    imprimir(L);
+
+    return 0;
+}
